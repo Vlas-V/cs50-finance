@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+
+
+<table class="table" id="theTable">
+  <thead>
+    <tr>      
+        <th scope="col">Symbol</th>
+        <th scope="col">Company Name</th>
+        <th scope="col">Type of Deal (Purches or Sale)</th>
+        <th scope="col">Shares</th>
+        <th scope="col">Price at That Moment</th>
+        <th scope="col">Total</th>
+        <th scope="col">TimeStamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for transaction in transactions %}
+        <tr class="mytr">
+          <td>{{transaction['symbol']}}</td>
+          <td>{{transaction['companyName']}}</td>
+          <td class="type">{{transaction['type']}}</td>
+          <td>{{transaction['shares']}}</td>
+          <td>{{transaction['price']}}</td>
+          <td>{{transaction['price']*transaction['shares']}}</td>
+          <td>{{transaction['transTime']}}</td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  
+<script>
+
+  $(document).ready(function(){
+          $(".mytr").each(function(){
+                
+              if ($(this).children(".type").text() == 'p') {
+                $(this).addClass("table-success");
+              }
+              else {
+                $(this).addClass("table-danger")
+              }
+          });
+   });
+
+   
+</script>
+
+{% endblock %}
