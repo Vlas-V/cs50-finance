@@ -152,8 +152,8 @@ def check():
     """Return true if username available, else false, in JSON format"""
     
     if len(request.args.get("username")) < 1:
-        return jsonify(false)
-    
+        return jsonify(False)
+        
     names = db.execute("SELECT * FROM users WHERE username = :username",
                         username = request.args.get("username"))
     
