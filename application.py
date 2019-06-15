@@ -173,9 +173,11 @@ def history():
     if not transactions:
         return apology("sorry, there're no transactions yet")
     
-    for transanction in transactions:
-        stockInfo = lookup(f"{transanction['symbol']}")
-        transanction['companyName'] = stockInfo['name']
+    for transaction in transactions:
+        stockInfo = lookup(f"{transaction['symbol']}")
+        transaction['companyName'] = stockInfo['name']
+        transaction['usdPrice'] = usd(transaction['price'])
+        transaction['usdTotal'] = usd(transaction['shares']*transaction['price'])
     
     
     return render_template("history.html", transactions=transactions)
@@ -239,6 +241,9 @@ def quote():
         stockinfo = lookup(request.form.get("symbol"))
         if not stockinfo:
             return apology("sorry, there's no stock with such symbol")
+            
+        # Display the price in the USD format
+        stockinfo['usdPrice'] = usd(stockinfo['price'])
         
         return render_template("quoted.html", stockinfo=stockinfo)
     

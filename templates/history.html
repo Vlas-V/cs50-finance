@@ -26,8 +26,8 @@
           <td>{{transaction['companyName']}}</td>
           <td class="type">{{transaction['type']}}</td>
           <td>{{transaction['shares']}}</td>
-          <td>{{transaction['price']}}</td>
-          <td>{{transaction['price']*transaction['shares']}}</td>
+          <td>{{transaction['usdPrice']}}</td>
+          <td>{{transaction['usdTotal']}}</td>
           <td>{{transaction['transTime']}}</td>
         </tr>
     {% endfor %}
