@@ -6,9 +6,6 @@
 
 {% block main %}
 
-<div>
-  Balance: {{ balance['cash'] }}
-</div>
 
 <table class="table">
   <thead>
@@ -21,15 +18,31 @@
     </tr>
   </thead>
   <tbody>
-    {% for stock in owned %}
+      <tr>
+        <td>CASH</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{cash}}</td>
+      </tr>
+    {% if owned|count() != 0 %}
+      {% for stock in owned %}
         <tr>
           <td>{{stock['symbol']}}</td>
           <td>{{stock['companyName']}}</td>
           <td>{{stock['shares']}}</td>
-          <td>{{stock['latestPrice']}}</td>
-          <td>{{stock['shares']*stock['latestPrice']}}</td>
+          <td>{{stock['usdLatestPrice']}}</td>
+          <td>{{stock['usdTotal']}}</td>
         </tr>
-    {% endfor %}
+      {% endfor %}
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{total}}</td>
+        </tr>
+    {% endif %}
   </tbody>
 </table>
 {% endblock %}

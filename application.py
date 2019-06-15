@@ -49,9 +49,15 @@ def index():
         owned = db.execute("SELECT * FROM owned JOIN stocksymbols ON owned.symbolID = stocksymbols.id WHERE owned.userID = :userID ",
                             userID = session.get('user_id'))
         
+        cash = db.execute("SELECT cash FROM users WHERE id = :id",
+                                id = session.get('user_id'))
+        
+        # Grand total value (i.e, stocks' total value plus cash)                                
+        total = cash[0]['cash']
+        
         # Render template in such case ?
         if not owned:
-            return apology("you don't own any stocks yet")
+            return render_template("index.html", owned=owned, cash=usd(cash[0]['cash']))
         
         # Assign current price to the stocks 
         for stock in owned:
@@ -60,11 +66,14 @@ def index():
                 return apology("there's no stock with such symbol")
             stock['companyName'] = stockInfo['name']
             stock['latestPrice'] = stockInfo['price']
+            
+            total += stock['latestPrice']*stock['shares']
+            
+            # Show values in the USD format
+            stock['usdLatestPrice'] = usd(stock['latestPrice'])
+            stock['usdTotal'] = usd(stock['latestPrice']*stock['shares'])
         
-        balance = db.execute("SELECT cash FROM users WHERE id = :id",
-                                id = session.get('user_id'))
-        
-        return render_template("index.html", owned=owned, balance=balance[0])
+        return render_template("index.html", owned=owned, cash=usd(cash[0]['cash']), total = usd(total))
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -138,7 +147,8 @@ def buy():
                     shares = int(request.form.get('shares')),
                     price = stockinfo['price'])
         
-        return apology("SUCCESS")
+        # Redirect user to home page
+        return redirect("/")
     
     # User reached route via GET (as by clicking a link or via redirect)                
     else:
@@ -150,14 +160,7 @@ def buy():
 @app.route("/check", methods=["GET"])
 def check():
     """Return true if username available, else false, in JSON format"""
-    
-    if len(request.args.get("username")) < 1:
-        return jsonify(False)
-        
-    names = db.execute("SELECT * FROM users WHERE username = :username",
-                        username = request.args.get("username"))
-    
-    return jsonify(not names)
+    return jsonify("TODO")
 
 
 @app.route("/history")
@@ -356,7 +359,8 @@ def sell():
                     shares = int(request.form.get('shares')),
                     price = stockInfo['price'])        
         
-        return apology("success")
+        # Redirect user to home page
+        return redirect("/")
     
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -365,7 +369,7 @@ def sell():
                             userID = session.get('user_id'))
                             
         return render_template("sell.html", owned=owned)
-
+    
 
 def errorhandler(e):
     """Handle error"""
