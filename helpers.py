@@ -39,7 +39,7 @@ def lookup(symbol):
 
     # Contact API
     try:
-        response = requests.get(f"https://api.iextrading.com/1.0/stock/{urllib.parse.quote_plus(symbol)}/quote")
+        response = requests.get(f"https://sandbox.iexapis.com/stable/stock/{urllib.parse.quote_plus(symbol)}/quote?token=Tpk_47d702d1ea7b4796b41675071f94cd45")
         response.raise_for_status()
     except requests.RequestException:
         return None
