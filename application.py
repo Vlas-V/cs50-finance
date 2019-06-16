@@ -85,15 +85,21 @@ def buy():
        
         # Ensure username was submitted
         if not request.form.get("symbol"):
-            return apology("must provide username", 403)
+            return apology("must provide symbol", 400)
 
         # Ensure password was submitted
         elif not request.form.get("shares"):
-            return apology("must provide password", 403)        
+            return apology("must provide a number of shares", 400)        
+        
+        # Ensure shares is a number
+        try: 
+            float(request.form.get("shares"))
+        except ValueError:
+            return apology("must provide a positive integer for shares input", 400)
         
         # Ensure shares is an integer
-        if not float(request.form.get("shares")).is_integer():
-            return apology("must provide a positive integer for shares input")
+        if not (float(request.form.get("shares")).is_integer() and (float(request.form.get("shares")) > 0)):
+            return apology("must provide a positive integer for shares input", 400)
             
         stockinfo = lookup(request.form.get("symbol"))
         userinfo = db.execute("SELECT * FROM users WHERE id = :id", id = session.get("user_id"))
@@ -160,8 +166,8 @@ def buy():
 @app.route("/check", methods=["GET"])
 def check():
     """Return true if username available, else false, in JSON format"""
-        if len(request.args.get("username")) < 1:
-            return jsonify(False)
+    if len(request.args.get("username")) < 1:
+       return jsonify(False)
     
         
     names = db.execute("SELECT * FROM users WHERE username = :username",
@@ -272,26 +278,26 @@ def register():
         
         # Ensure username was submitted 
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
         
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
       
         # Ensure confirmation was submitted
         elif not request.form.get("confirmation"):
-            return apology("Smust confirm password", 403)
+            return apology("must confirm password", 400)
             
         # Ensure password matches confimation
         elif not request.form.get("password") == request.form.get("confirmation"):
-            return apology("passwords must match", 403)
+            return apology("passwords must match", 400)
             
         # Ensure the provided username is unique 
         usernames = db.execute("SELECT * FROM users WHERE username = :username",
                                 username = request.form.get("username"))
         
         if not len(usernames) == 0:
-            return apology("username must be unique", 403)
+            return apology("username must be unique", 400)
         
         db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)", 
                     username = request.form.get("username"),

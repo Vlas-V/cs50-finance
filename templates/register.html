@@ -5,52 +5,89 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/register" class="needs-validation" method="post" novalidate>
+    <form action="/register" method="post" id="theFormID">
         <div class="form-group">
-            <input type="text" class="form-control" id="validationUsername" name="username" placeholder="Username" autocomplete="off" autofocus required>
-            <div class="valid-feedback">Looks good!</div>
-            <div class="invalid-feedback">Please choose a username.</div>            
+            <input type="text" class="form-control" id="usernameID" onkeyup="UniquenessCheck()" name="username" placeholder="Username" autocomplete="off" autofocus required>
+            <div class="valid-feedback" id="valid-feedback-usernameID"></div>
+            <div class="invalid-feedback" id="invalid-feedback-usernameID"></div>            
+        </div>
+ 
+        <div class="form-group">
+            <input class="form-control" name="password" id="passwordID" onkeyup="Match()" placeholder="Password" type="password" required>
         </div>
         <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password">
+            <input class="form-control" name="confirmation" id="confirmationID" placeholder="Password (again)" type="password" required>
+            <div class="valid-feedback" id="valid-feedback-confirmationID"></div>
+            <div class="invalid-feedback" id="invalid-feedback-confirmationID"></div> 
         </div>
-        <div class="form-group">
-            <input class="form-control" name="confirmation" placeholder="Password (again)" type="password">
-        </div>
+  
+        
         <button class="btn btn-primary" type="submit">Register</button>
     </form>
     
+    
     <script>
-    
-    let input = $('validationUsername');
-    
-    input.onkeyup = function() {
-        $.get('/check?q=' + input.value, function(data) {
-            if (data == false) {
-                input.addClass('is-invalid');
-            }
-        });
-    };
-    
-    
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName('needs-validation');
-        // Loop over them and prevent submission
-        var validation = Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-            if (form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
         
-        
+            let wasValidated = false
+            let unique = false
+            let missing = false
+            
+                        
+            $(document).ready(function () {
+                document.getElementById('theFormID').addEventListener('submit', function(event) {
+                    if (unique === false || wasValidated === false) {
+                      event.preventDefault(); 
+                      event.stopPropagation();
+                    }
+                });
+                
+                document.addEventListener('keyup', function(event) {
+                    
+                    let username = document.getElementById('usernameID');
+                    let password = document.getElementById('passwordID');
+                    let confirmation = document.getElementById('confirmationID');
+                    
+                    if (!(username && username.value)) {
+                        document.getElementById('invalid-feedback-usernameID').innerHTML = "Username must be provided";
+                        document.getElementById('usernameID').classList.remove('is-valid');
+                        document.getElementById('usernameID').classList.add('is-invalid');
+                        
+                        wasValidated = false
+                    }
+                });
+                
+            });
+            
+            function UniquenessCheck() {
+                $.get('/check?username=' + document.getElementById('usernameID').value, function(data) {
+                    if (data == false) {
+                        document.getElementById('invalid-feedback-usernameID').innerHTML = "Username must be unique";
+                        document.getElementById('usernameID').classList.remove('is-valid');
+                        document.getElementById('usernameID').classList.add('is-invalid');
+                        unique = false
+                    }
+                    else {
+                        document.getElementById('valid-feedback-usernameID').innerHTML = "Looks good!";
+                        document.getElementById('usernameID').classList.remove('is-invalid');
+                        document.getElementById('usernameID').classList.add('is-valid');
+                        unique = true
+                    }
+                                
+                });
+            };
+            
+            function Match() {
+                if ($('#passwordID').val() != $('#confirmationID').val()) {
+                    document.getElementById('invalid-feedback-confirmationID').innerHTML = "Password must match!";
+                    document.getElementById('confirmationID').classList.remove('is-valid');
+                    document.getElementById('confirmationID').classList.add('is-invalid');
+                }
+                else {
+                    document.getElementById('valid-feedback-confirmationID').innerHTML = "Nice!";
+                    document.getElementById('confirmationID').classList.remove('is-invalid');
+                    document.getElementById('confirmationID').classList.add('is-valid');
+                }
+            };
+     
     </script>
 {% endblock %}
