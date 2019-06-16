@@ -28,14 +28,14 @@
     
     <script>
         
-            let wasValidated = false
+    
             let unique = false
             let missing = false
             
                         
             $(document).ready(function () {
                 document.getElementById('theFormID').addEventListener('submit', function(event) {
-                    if (unique === false || wasValidated === false) {
+                    if (unique === false) {
                       event.preventDefault(); 
                       event.stopPropagation();
                     }
