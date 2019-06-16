@@ -160,7 +160,14 @@ def buy():
 @app.route("/check", methods=["GET"])
 def check():
     """Return true if username available, else false, in JSON format"""
-    return jsonify("TODO")
+        if len(request.args.get("username")) < 1:
+            return jsonify(False)
+    
+        
+    names = db.execute("SELECT * FROM users WHERE username = :username",
+                         username = request.args.get("username"))
+    
+    return jsonify(not names)
 
 
 @app.route("/history")
